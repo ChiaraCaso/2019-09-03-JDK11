@@ -109,6 +109,30 @@ public class FoodDao {
 
 	}
 	
-	
+	public List <String> getTipoPorzione () {
+		String sql = "SELECT DISTINCT p.portion_display_name AS tipo " + 
+				"FROM `portion` p " + 
+				"ORDER BY p.portion_display_name ASC ";
+		
+		List <String> result = new ArrayList<String>();
+		
+		try {
+			
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet res = st.executeQuery();
+			
+			while (res.next()) {
+				result.add(res.getString("tipo"));
+			}
+			
+			conn.close();
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
+	}
 
 }

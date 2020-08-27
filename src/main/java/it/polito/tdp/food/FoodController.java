@@ -40,7 +40,7 @@ public class FoodController {
     private Button btnCammino; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxPorzioni"
-    private ComboBox<?> boxPorzioni; // Value injected by FXMLLoader
+    private ComboBox<String> boxPorzioni; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -54,7 +54,14 @@ public class FoodController {
     @FXML
     void doCorrelate(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Cerco porzioni correlate...");
+    	
+    	try {
+    		String s = txtCalorie.getText();
+    		Integer calorie = Integer.parseInt(s);
+    	} catch (NumberFormatException e) {
+    		txtResult.appendText("Inserire le calorie nel formato corretto!");
+    	}
+  
     	
     }
 
@@ -79,5 +86,6 @@ public class FoodController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.boxPorzioni.getItems().addAll(this.model.getTipoPorzione());
     }
 }
