@@ -55,21 +55,27 @@ public class FoodController {
     void doCorrelate(ActionEvent event) {
     	txtResult.clear();
     	
-    	try {
-    		String s = txtCalorie.getText();
-    		Integer calorie = Integer.parseInt(s);
-    	} catch (NumberFormatException e) {
-    		txtResult.appendText("Inserire le calorie nel formato corretto!");
-    	}
-  
-    	
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Creazione grafo...");
     	
+    	try {
+    		String s = txtCalorie.getText();
+    		Integer calorie = Integer.parseInt(s);
+    		
+    		this.model.creaGrafo(calorie);
+    		txtResult.appendText("GRAFO CREATO!\n");
+    		txtResult.appendText("#VERTICI: " +this.model.nVertici()+"\n");
+    		txtResult.appendText("#ARCHI: "+this.model.nArchi()+"\n");
+    		
+    		this.boxPorzioni.getItems().clear();
+        	this.boxPorzioni.getItems().addAll(this.model.getTipoPorzione(calorie));
+        	
+    	} catch (NumberFormatException e) {
+    		txtResult.appendText("Inserire le calorie nel formato corretto!");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -86,6 +92,5 @@ public class FoodController {
     
     public void setModel(Model model) {
     	this.model = model;
-    	this.boxPorzioni.getItems().addAll(this.model.getTipoPorzione());
     }
 }

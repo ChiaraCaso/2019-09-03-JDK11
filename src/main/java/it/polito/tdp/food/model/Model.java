@@ -1,10 +1,11 @@
 package it.polito.tdp.food.model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -14,20 +15,39 @@ public class Model {
 	
 	FoodDao dao;
 	Graph<String, DefaultWeightedEdge> grafo;
-	//Map <Integer, Portion> idMap;
-	
+	List<String> vertici ;
+	List <Arco> archi;
 	
 	public Model () {
 		this.dao = new FoodDao();
 		this.grafo = new SimpleWeightedGraph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class);
-		//this.idMap = new HashMap<Integer, Portion>();
+		this.vertici = new LinkedList<String>();
+		this.archi = new ArrayList<Arco>();
 	}
 	
-	public void creaGrafo () {
+	public void creaGrafo (Integer cal) {
+		this.vertici = dao.getTipoPorzione(cal);
+		this.archi = dao.getArchi();
 		
+		Graphs.addAllVertices(this.grafo, vertici);
+		
+		for (Arco a : archi) {
+			//SE NON C'E' AGGIUNGO 
+			if (grafo.getEdge(a.getPorzione1(), a.getPorzione2()) == null) {
+				Graphs.addEdge(this.grafo, a.getPorzione1(), a.getPorzione2(), a.getPeso());
+			}
+		}
 	}
 	
-	public List <String> getTipoPorzione () {
-		return dao.getTipoPorzione();
+	public List <String> getTipoPorzione (Integer cal) {
+		return dao.getTipoPorzione(cal);
+	}
+	
+	public int nVertici() {
+		return grafo.vertexSet().size();
+	}
+	
+	public int nArchi () {
+		return grafo.edgeSet().size();
 	}
 }

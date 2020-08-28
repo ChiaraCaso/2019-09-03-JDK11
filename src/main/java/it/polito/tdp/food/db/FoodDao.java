@@ -6,6 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.mariadb.jdbc.internal.com.read.dao.Results;
+
+import it.polito.tdp.food.model.Arco;
 import it.polito.tdp.food.model.Condiment;
 import it.polito.tdp.food.model.Food;
 import it.polito.tdp.food.model.Portion;
@@ -109,9 +113,10 @@ public class FoodDao {
 
 	}
 	
-	public List <String> getTipoPorzione () {
+	public List <String> getTipoPorzione (Integer cal) {
 		String sql = "SELECT DISTINCT p.portion_display_name AS tipo " + 
 				"FROM `portion` p " + 
+				"WHERE calories < ? " +
 				"ORDER BY p.portion_display_name ASC ";
 		
 		List <String> result = new ArrayList<String>();
@@ -120,6 +125,7 @@ public class FoodDao {
 			
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, cal);
 			ResultSet res = st.executeQuery();
 			
 			while (res.next()) {
@@ -130,6 +136,39 @@ public class FoodDao {
 			return result;
 			
 		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	public List <Arco> getArchi () {
+		String sql = "SELECT p1.portion_display_name AS p1, p2.portion_display_name AS p2, COUNT(DISTINCT p1.food_code) AS peso " + 
+				"FROM `portion` p1, `portion` p2 " + 
+				"WHERE p1.food_code = p2.food_code " + 
+				"AND p1.portion_id <> p2.portion_id " + 
+				"GROUP BY p1.portion_display_name, p2.portion_display_name " + 
+				"HAVING peso >= 1 ";
+		
+		List <Arco> result = new ArrayList<Arco>();
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet res = st.executeQuery();
+			
+			while (res.next()) {
+				String porzione1 = res.getString("p1");
+				String porzione2 = res.getString("p2");
+				
+				if (porzione1 != null && porzione2 != null) {
+					result.add(new Arco(porzione1, porzione2, res.getInt("peso")));
+				}
+			}
+			
+			conn.close();
+			return result;
+			
+		}  catch (SQLException e) {
 			e.printStackTrace();
 			return null ;
 		}
