@@ -55,6 +55,8 @@ public class FoodController {
     void doCorrelate(ActionEvent event) {
     	txtResult.clear();
     	
+    	txtResult.appendText("Componenti connesse: "+this.model.Connesse()+"\n");
+		txtResult.appendText("Elenco stati: " +this.model.ElencoTipiPorzione()+"\n");
     }
 
     @FXML

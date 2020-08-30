@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -33,7 +34,10 @@ public class Model {
 		
 		for (Arco a : archi) {
 			//SE NON C'E' AGGIUNGO 
-			if (grafo.getEdge(a.getPorzione1(), a.getPorzione2()) == null) {
+//			if (grafo.getEdge(a.getPorzione1(), a.getPorzione2()) == null) {
+//				Graphs.addEdge(this.grafo, a.getPorzione1(), a.getPorzione2(), a.getPeso());
+//			}
+			if (grafo.containsVertex(a.getPorzione1()) && grafo.containsVertex(a.getPorzione2())) {
 				Graphs.addEdge(this.grafo, a.getPorzione1(), a.getPorzione2(), a.getPeso());
 			}
 		}
@@ -49,5 +53,21 @@ public class Model {
 	
 	public int nArchi () {
 		return grafo.edgeSet().size();
+	}
+	
+	public int Connesse() {
+		ConnectivityInspector<String, DefaultWeightedEdge> ci = new ConnectivityInspector<String, DefaultWeightedEdge>(grafo);
+		
+		return ci.connectedSets().size();
+	}
+	
+	public String ElencoTipiPorzione() {
+		
+		String result = "";
+		for (String s : vertici) {
+			result += s + " " + Graphs.neighborListOf(this.grafo, s).size() + "\n";
+		}
+		return result;
+		
 	}
 }
